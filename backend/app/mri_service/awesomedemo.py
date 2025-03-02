@@ -1,7 +1,7 @@
 # %%
-from share import *
+# from app.mri_service.share import *
 
-import config
+import app.mri_service.config as config
 import cv2
 import einops
 import numpy as np
@@ -168,38 +168,47 @@ ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, d
 
 # %%
 
-result = process(input_image = input_image, 
-                 prompt = prompt, 
-                 a_prompt = a_prompt, 
-                 n_prompt = n_prompt,
-                 num_samples = num_samples, 
-                 image_resolution = image_resolution, 
-                 ddim_steps = ddim_steps, 
-                 guess_mode = guess_mode, 
-                 strength = strength, 
-                 scale = scale, 
-                 seed = seed, 
-                 eta = eta, 
-                 low_threshold = low_threshold, 
-                 high_threshold = high_threshold)
+# result = process(input_image = input_image, 
+#                  prompt = prompt, 
+#                  a_prompt = a_prompt, 
+#                  n_prompt = n_prompt,
+#                  num_samples = num_samples, 
+#                  image_resolution = image_resolution, 
+#                  ddim_steps = ddim_steps, 
+#                  guess_mode = guess_mode, 
+#                  strength = strength, 
+#                  scale = scale, 
+#                  seed = seed, 
+#                  eta = eta, 
+#                  low_threshold = low_threshold, 
+#                  high_threshold = high_threshold)
 
-for res in result:
-    plt.imshow(res)
-    plt.axis(False)
-    plt.show()
+# for res in result:
+#     plt.imshow(res)
+#     plt.axis(False)
+#     plt.show()
     
+# # %%
+# index = -1
+# test = take_luminance_from_first_chroma_from_second(resize_image(HWC3(input_image), image_resolution), result[index], mode="lab")
+
+# fig, axs = plt.subplots(1,3, figsize=(15, 5))
+# axs[0].imshow(input_image)
+# axs[1].imshow(result[index])
+# axs[2].imshow(test)
+
+# axs[0].axis(False)
+# axs[1].axis(False)
+# axs[2].axis(False)
+
+# plt.show()
 # %%
-index = -1
-test = take_luminance_from_first_chroma_from_second(resize_image(HWC3(input_image), image_resolution), result[index], mode="lab")
 
-fig, axs = plt.subplots(1,3, figsize=(15, 5))
-axs[0].imshow(input_image)
-axs[1].imshow(result[index])
-axs[2].imshow(test)
+# Dummy Function to test validity of file
+# TODO: Remove/Replace
+def generate_mri_images() -> bool:
+    """
+    Generate MRI Images.
+    """
 
-axs[0].axis(False)
-axs[1].axis(False)
-axs[2].axis(False)
-
-plt.show()
-# %%
+    return False # not implemented yet
