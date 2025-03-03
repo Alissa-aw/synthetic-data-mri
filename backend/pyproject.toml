@@ -22,12 +22,16 @@ dependencies = [
     "sentry-sdk[fastapi]<2.0.0,>=1.40.6",
     "pyjwt<3.0.0,>=2.8.0",
     "torch",
-    "pytorch-lightning",
-    "opencv-python",
+    "torchvision",
+    "pytorch-lightning==1.5.0",
+    "opencv-python-headless",
     "einops",
     "numpy",
     "imageio",
-    "matplotlib"
+    "matplotlib",
+    "omegaconf",
+    "transformers==4.19.2",
+    "open_clip_torch==2.0.2"
 ]
 
 [tool.uv]

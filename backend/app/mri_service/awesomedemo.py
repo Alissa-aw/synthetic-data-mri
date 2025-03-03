@@ -15,18 +15,16 @@ import random
 import torch
 
 from pytorch_lightning import seed_everything
-# from annotator.util import resize_image, HWC3
-# from annotator.canny import CannyDetector
-# from cldm.model import create_model, load_state_dict
-# from cldm.ddim_hacked import DDIMSampler
 import imageio
 import numpy as np
 import matplotlib.pyplot as plt
 
+import importlib.resources as pkg_resources
 
 apply_canny = CannyDetector()
 
-model = create_model('./models/cldm_v15.yaml').cpu()
+model_yaml_path = pkg_resources.path("controlnet.models", "cldm_v15.yaml")
+model = create_model(model_yaml_path).cpu()
 model.load_state_dict(load_state_dict('./models/control_sd15_canny.pth', location='cuda'))
 model = model.cuda()
 ddim_sampler = DDIMSampler(model)
