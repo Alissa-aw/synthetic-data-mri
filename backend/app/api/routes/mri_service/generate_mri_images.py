@@ -41,11 +41,3 @@ def generate_mri_images(
     #     "result_images": result_images
     # })
     return FileResponse(comparison_path)
-
-
-@router.get("/download_image")
-def download_image(image_path: str) -> Any:
-    """
-    Download an image by providing its path.
-    """
-    return FileResponse(image_path)

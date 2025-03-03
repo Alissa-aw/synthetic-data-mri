@@ -1,16 +1,21 @@
 # %%
-# from app.mri_service.share import *
+# Basic Imports
 import os
 from datetime import datetime
+import importlib.resources as pkg_resources
 
+### SD Demo Imports
+# Custom MRI Data Service
 import app.mri_service.config as config
 from app.api.models.mri_service import MRIProcessParameters
 
+# ControlNet Imports
 from controlnet.annotator.util import resize_image, HWC3
 from controlnet.annotator.canny import CannyDetector
 from controlnet.cldm.model import create_model, load_state_dict
 from controlnet.cldm.ddim_hacked import DDIMSampler
 
+# General Imports
 import cv2
 import einops
 import numpy as np
@@ -22,10 +27,10 @@ import imageio
 import numpy as np
 import matplotlib.pyplot as plt
 
-import importlib.resources as pkg_resources
-
+# Initialize Canny Detector (Edge Detection)
 apply_canny = CannyDetector()
 
+# Load the model
 model_yaml_path = pkg_resources.path("controlnet.models", "cldm_v15.yaml")
 model = create_model(model_yaml_path).cpu()
 model_path = os.path.join(os.path.dirname(__file__), "models", "control_sd15_canny.pth")
@@ -34,7 +39,6 @@ try:
     print("Model loaded successfully!")
 except Exception as e:
     print("Error loading model:", e)
-
 
 # Determine device (CUDA if available, otherwise CPU)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -103,6 +107,7 @@ def process(input_image,
             num_samples, image_resolution, ddim_steps, 
             guess_mode, strength, scale, seed, eta, 
             low_threshold, high_threshold):
+    '''Run model for inference with provided parameters'''
     with torch.no_grad():
         img = resize_image(HWC3(input_image), image_resolution)
         H, W, C = img.shape
@@ -149,59 +154,8 @@ def process(input_image,
 image_path = os.path.join(os.path.dirname(__file__), "input_images", "mri_brain.jpg")
 input_image = imageio.imread(image_path)
 
-# Print the shape of the array
-print(input_image.shape)
-
-plt.imshow(input_image)
 
 # %%
-low_threshold =  50
-high_threshold = 100
-detected_map = apply_canny(input_image, low_threshold, high_threshold)
-detected_map = HWC3(detected_map)
-
-# detected_map = feature.canny(rgb2gray(input_image), sigma=2).astype(np.float32)
-# detected_map = filters.roberts(rgb2gray(input_image))
-# detected_map = filters.sobel(rgb2gray(input_image))
-# detected_map = filters.hessian(rgb2gray(input_image), range(1, 10))
-
-# detected_map = np.clip(detected_map.astype(np.float32) * 255, 0, 255).astype(np.uint8)
-# detected_map = HWC3(detected_map)
-
-plt.imshow(255-detected_map)
-# plt.imshow(detected_map)
-plt.show()
-
-
-# %%
-
-prompt = "mri brain scan"
-num_samples = 1
-image_resolution = 512
-strength = 1.0
-guess_mode = False
-low_threshold =  50
-high_threshold = 100
-ddim_steps = 10
-scale = 9.0
-seed = 1
-eta = 0.0
-a_prompt = 'good quality' # 'best quality, extremely detailed'
-n_prompt = 'animal, drawing, painting, vivid colors, longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality'
-
-
-ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, low_threshold, high_threshold]
-
-
-# %%
-
-
-# %%
-
-# Dummy Function to test validity of file
-# TODO: Remove/Replace
-
-
 def generate_synthetic_mri_images(params: MRIProcessParameters) -> dict:
     """
     Generate MRI Images.
@@ -228,12 +182,12 @@ def generate_synthetic_mri_images(params: MRIProcessParameters) -> dict:
         plt.axis(False)
         plt.show()
         
-    # %%
-    index = -1
+    index = -1 # only show the last result
     test = take_luminance_from_first_chroma_from_second(
-        resize_image(HWC3(input_image), image_resolution)
-        , result[index], mode="lab")
+        resize_image(HWC3(input_image), params.image_resolution), 
+        result[index], mode="lab")
 
+    # Plot result
     fig, axs = plt.subplots(1,3, figsize=(15, 5))
     axs[0].imshow(input_image)
     axs[1].imshow(result[index])
@@ -242,8 +196,6 @@ def generate_synthetic_mri_images(params: MRIProcessParameters) -> dict:
     axs[0].axis(False)
     axs[1].axis(False)
     axs[2].axis(False)
-
-    # plt.show()
 
     # Create a unique directory for the results
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
