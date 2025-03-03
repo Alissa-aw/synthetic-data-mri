@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.api.deps import CurrentUser, SessionDep
 
-from app.mri_service.awesomedemo import generate_mri_images
+from app.mri_service.awesomedemo import generate_synthetic_mri_images
 
 router = APIRouter(prefix="/mri_service", tags=["mri_service"])
 
@@ -17,6 +17,6 @@ def generate_mri_images(
     TODO: use specific configuration provided by user in request to route
     """
     print("Called generate_mri_images route.")
-    print(f"Called generate_mri_images: {generate_mri_images()}")
+    print(f"Called generate_synthetic_mri_images: {generate_synthetic_mri_images()}")
 
     return True

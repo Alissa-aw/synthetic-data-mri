@@ -221,7 +221,7 @@ ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, d
 
 # Dummy Function to test validity of file
 # TODO: Remove/Replace
-def generate_mri_images() -> bool:
+def generate_synthetic_mri_images() -> bool:
     """
     Generate MRI Images.
     """
