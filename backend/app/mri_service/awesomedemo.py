@@ -195,7 +195,7 @@ ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, d
 
 # Dummy Function to test validity of file
 # TODO: Remove/Replace
-def generate_synthetic_mri_images() -> bool:
+def generate_synthetic_mri_images() -> dict:
     """
     Generate MRI Images.
     """
@@ -242,9 +242,22 @@ def generate_synthetic_mri_images() -> bool:
     output_dir = os.path.join(os.path.dirname(__file__), "output", f"result_{timestamp}")
     os.makedirs(output_dir, exist_ok=True)
 
-    fig.savefig(os.path.join(output_dir, "comparison.png"))
+    comparison_path = os.path.join(output_dir, "comparison.png")
+    fig.savefig(comparison_path)
     plt.close(fig)
 
-    print(f"Images saved in {output_dir}")
+    # Save individual results
+    # result_paths = []
+    # for i, res in enumerate(result):
+    #     result_path = os.path.join(output_dir, f"result_{i}.png")
+    #     imageio.imwrite(result_path, res)
+    #     result_paths.append(result_path)
 
-    return False # not implemented yet
+    result_paths = os.path.join(output_dir, f"result.png")
+    imageio.imwrite(result_paths, result[-1])
+
+    return {
+        "output_dir": output_dir,
+        "comparison_image": comparison_path,
+        "result_images": result_paths
+    }
