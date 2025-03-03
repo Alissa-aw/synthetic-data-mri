@@ -30,9 +30,6 @@ dependencies = [
     "matplotlib"
 ]
 
-[project.model]
-controlnet = { git = "https://github.com/lllyasviel/ControlNet.git", rev = "ed85cd1e25a5ed592f7d8178495b4483de0331bf" }
-
 [tool.uv]
 dev-dependencies = [
     "pytest<8.0.0,>=7.4.3",

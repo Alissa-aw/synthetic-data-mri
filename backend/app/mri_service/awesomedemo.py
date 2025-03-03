@@ -2,6 +2,12 @@
 # from app.mri_service.share import *
 
 import app.mri_service.config as config
+
+from controlnet.annotator.util import resize_image, HWC3
+from controlnet.annotator.canny import CannyDetector
+from controlnet.cldm.model import create_model, load_state_dict
+from controlnet.cldm.ddim_hacked import DDIMSampler
+
 import cv2
 import einops
 import numpy as np
@@ -9,10 +15,10 @@ import random
 import torch
 
 from pytorch_lightning import seed_everything
-from annotator.util import resize_image, HWC3
-from annotator.canny import CannyDetector
-from cldm.model import create_model, load_state_dict
-from cldm.ddim_hacked import DDIMSampler
+# from annotator.util import resize_image, HWC3
+# from annotator.canny import CannyDetector
+# from cldm.model import create_model, load_state_dict
+# from cldm.ddim_hacked import DDIMSampler
 import imageio
 import numpy as np
 import matplotlib.pyplot as plt
