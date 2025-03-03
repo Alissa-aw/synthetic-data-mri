@@ -89,6 +89,9 @@ services:
         condition: service_completed_successfully
     env_file:
       - .env
+    volumes:
+      - ./backend/app:/app
+
     environment:
       - DOMAIN=${DOMAIN}
       - FRONTEND_HOST=${FRONTEND_HOST?Variable not set}
@@ -133,6 +136,14 @@ services:
 
       # Enable redirection for HTTP and HTTPS
       - traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.middlewares=https-redirect
+  
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all  # or specify the number of GPUs you want to use
+              capabilities: [gpu]
 
   frontend:
     image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'

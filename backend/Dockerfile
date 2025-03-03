@@ -27,7 +27,10 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-install-project
 
-ENV PYTHONPATH=/app
+# Clone ControlNet manually
+RUN git clone --depth 1 --branch main https://github.com/lllyasviel/ControlNet.git /app/controlnet
+# Set ControlNet as a Python module
+ENV PYTHONPATH="/app:/app/controlnet:$PYTHONPATH"
 
 COPY ./scripts /app/scripts
 
@@ -40,4 +43,5 @@ COPY ./app /app/app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
-CMD ["fastapi", "run", "--workers", "4", "app/main.py"]
+# CMD ["fastapi", "run", "--reload", "--workers", "4", "app/main.py"]
+CMD ["sleep", "infinity"]
