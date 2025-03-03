@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 
 import app.mri_service.config as config
+from app.api.models.mri_service import MRIProcessParameters
 
 from controlnet.annotator.util import resize_image, HWC3
 from controlnet.annotator.canny import CannyDetector
@@ -97,7 +98,11 @@ def take_luminance_from_first_chroma_from_second(luminance, chroma, mode="lab", 
 # %%
 # utils functions
 
-def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, low_threshold, high_threshold):
+def process(input_image, 
+            prompt, a_prompt, n_prompt, 
+            num_samples, image_resolution, ddim_steps, 
+            guess_mode, strength, scale, seed, eta, 
+            low_threshold, high_threshold):
     with torch.no_grad():
         img = resize_image(HWC3(input_image), image_resolution)
         H, W, C = img.shape
@@ -195,25 +200,28 @@ ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, d
 
 # Dummy Function to test validity of file
 # TODO: Remove/Replace
-def generate_synthetic_mri_images() -> dict:
+
+
+def generate_synthetic_mri_images(params: MRIProcessParameters) -> dict:
     """
     Generate MRI Images.
     """
-
-    result = process(input_image = input_image, 
-                     prompt = prompt, 
-                     a_prompt = a_prompt, 
-                     n_prompt = n_prompt,
-                     num_samples = num_samples, 
-                     image_resolution = image_resolution, 
-                     ddim_steps = ddim_steps, 
-                     guess_mode = guess_mode, 
-                     strength = strength, 
-                     scale = scale, 
-                     seed = seed, 
-                     eta = eta, 
-                     low_threshold = low_threshold, 
-                     high_threshold = high_threshold)
+    result = process(
+        input_image=input_image,
+        prompt=params.prompt,
+        a_prompt=params.a_prompt,
+        n_prompt=params.n_prompt,
+        num_samples=params.num_samples,
+        image_resolution=params.image_resolution,
+        ddim_steps=params.ddim_steps,
+        guess_mode=params.guess_mode,
+        strength=params.strength,
+        scale=params.scale,
+        seed=params.seed,
+        eta=params.eta,
+        low_threshold=params.low_threshold,
+        high_threshold=params.high_threshold
+    )
 
     for res in result:
         plt.imshow(res)
