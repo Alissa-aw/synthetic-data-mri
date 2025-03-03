@@ -1,4 +1,3 @@
-# %%
 # Basic Imports
 import os
 from datetime import datetime
@@ -51,8 +50,11 @@ model = model.to(device)
 
 ddim_sampler = DDIMSampler(model)
 
+### Load reference image
+# Load the PNG image into a numpy array
+image_path = os.path.join(os.path.dirname(__file__), "input_images", "mri_brain.jpg")
+input_image = imageio.imread(image_path)
 
-# %%
 # image processing functions
 def rgb2lab(rgb: np.ndarray) -> np.ndarray:
     return cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB)
@@ -99,9 +101,7 @@ def take_luminance_from_first_chroma_from_second(luminance, chroma, mode="lab", 
             )
         )
  
-# %%
-# utils functions
-
+# Main inference function
 def process(input_image, 
             prompt, a_prompt, n_prompt, 
             num_samples, image_resolution, ddim_steps, 
@@ -133,7 +133,11 @@ def process(input_image,
         if config.save_memory:
             model.low_vram_shift(is_diffusing=True)
 
-        model.control_scales = [strength * (0.825 ** float(12 - i)) for i in range(13)] if guess_mode else ([strength] * 13)  # Magic number. IDK why. Perhaps because 0.825**12<0.01 but 0.826**12>0.01
+        # Sample Model
+        # TODO: Research more on the parameters
+        model.control_scales = [
+            strength * (0.825 ** float(12 - i)) for i in range(13)] \
+                if guess_mode else ([strength] * 13)  
         samples, intermediates = ddim_sampler.sample(ddim_steps, num_samples,
                                                      shape, cond, verbose=False, eta=eta,
                                                      unconditional_guidance_scale=scale,
@@ -148,14 +152,6 @@ def process(input_image,
         results = [x_samples[i] for i in range(num_samples)]
     return [255 - detected_map] + results
 
-
-# %%
-# Load the PNG image into a numpy array
-image_path = os.path.join(os.path.dirname(__file__), "input_images", "mri_brain.jpg")
-input_image = imageio.imread(image_path)
-
-
-# %%
 def generate_synthetic_mri_images(params: MRIProcessParameters) -> dict:
     """
     Generate MRI Images.
