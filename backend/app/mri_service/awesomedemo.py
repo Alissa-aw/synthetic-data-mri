@@ -1,5 +1,6 @@
 # %%
 # from app.mri_service.share import *
+import os
 
 import app.mri_service.config as config
 
@@ -25,8 +26,17 @@ apply_canny = CannyDetector()
 
 model_yaml_path = pkg_resources.path("controlnet.models", "cldm_v15.yaml")
 model = create_model(model_yaml_path).cpu()
-model.load_state_dict(load_state_dict('./models/control_sd15_canny.pth', location='cuda'))
-model = model.cuda()
+model_path = os.path.join(os.path.dirname(__file__), "models", "control_sd15_canny.pth")
+
+# Determine device (CUDA if available, otherwise CPU)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Load model weights with proper device mapping
+model.load_state_dict(load_state_dict(model_path, location=device))
+
+# Move model to the selected device
+model = model.to(device)
+
 ddim_sampler = DDIMSampler(model)
 
 
@@ -124,7 +134,8 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
 
 # %%
 # Load the PNG image into a numpy array
-input_image = imageio.imread('test_imgs//mri_brain.jpg')
+image_path = os.path.join(os.path.dirname(__file__), "input_images", "mri_brain.jpg")
+input_image = imageio.imread(image_path)
 
 # Print the shape of the array
 print(input_image.shape)
